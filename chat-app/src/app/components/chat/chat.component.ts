@@ -1,7 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ChatService } from '../../services/chat/chat.service';
 import { FormsModule } from '@angular/forms';
 import { NgIf, NgFor } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
 import {
   MessageCreateDto,
   MessageResponseDto,
@@ -9,7 +13,15 @@ import {
 
 @Component({
   selector: 'app-chat',
-  imports: [FormsModule, NgIf, NgFor],
+  imports: [
+    FormsModule,
+    NgIf,
+    NgFor,
+    CommonModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatButtonModule,
+  ],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css',
 })
@@ -37,22 +49,17 @@ export class ChatComponent implements OnInit {
       alert('Minden mező kitöltése kötelező!');
       return;
     }
-
     this.isLoading = true;
 
-    // MessageCreateDto létrehozása
     const messageDto: MessageCreateDto = {
       content: this.content.trim(),
       user: this.user.trim(),
     };
 
-    // Service hívás
     this.chatService.createMessage(messageDto).subscribe({
       next: (newMessage: MessageResponseDto) => {
-        // Sikeres létrehozás
         this.messages.push(newMessage);
 
-        // Form mezők tisztítása
         this.user = '';
         this.content = '';
 

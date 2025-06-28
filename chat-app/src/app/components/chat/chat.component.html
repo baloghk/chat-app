@@ -1,59 +1,55 @@
-<!-- message-form.component.html -->
-<div class="container">
-  <h2>Új Üzenet</h2>
+<div class="chat-page">
+  <h3 style="margin-top: 50px">Global chat:</h3>
+  <div class="chat-messages">
+    <div *ngIf="messages.length === 0">Még nincsenek üzenetek...</div>
 
-  <!-- Form -->
-  <form (ngSubmit)="onSubmit()" #messageForm="ngForm">
-    <div class="form-group">
-      <label for="user">Felhasználónév:</label>
-      <input
-        type="text"
-        id="user"
-        name="user"
-        [(ngModel)]="user"
-        required
-        maxlength="100"
-        class="form-control"
-        placeholder="Add meg a neved..."
-      />
-    </div>
-
-    <div class="form-group">
-      <label for="content">Üzenet:</label>
-      <input
-        type="text"
-        id="content"
-        name="content"
-        [(ngModel)]="content"
-        required
-        maxlength="100"
-        class="form-control"
-        placeholder="Írd ide az üzeneted..."
-      />
-    </div>
-
-    <button
-      type="submit"
-      [disabled]="isLoading || messageForm.invalid"
-      class="btn btn-primary"
-    >
-      {{ isLoading ? "Küldés..." : "Üzenet Küldése" }}
-    </button>
-  </form>
-
-  <!-- Üzenetek megjelenítése -->
-  <div class="messages-section">
-    <h3>Üzenetek:</h3>
-    <div *ngIf="messages.length === 0" class="no-messages">
-      Még nincsenek üzenetek...
-    </div>
-
-    <div *ngFor="let message of messages" class="message-item">
-      <div class="message-header">
-        <strong>{{ message.user }}</strong>
-        <span class="message-date">{{ message.timestamp }}</span>
+    <div *ngFor="let message of messages">
+      <div class="message-card">
+        <small>{{ message.user }} - </small>
+        <small>{{ message.timestamp | date : "shortTime" }}</small>
+        <br />
+        <strong>{{ message.content }}</strong>
       </div>
-      <p class="message-content">{{ message.content }}</p>
     </div>
   </div>
+  <form (ngSubmit)="onSubmit()" #messageForm="ngForm" class="message-form">
+    <div>
+      <mat-form-field>
+        <input
+          matInput
+          type="text"
+          id="user"
+          name="user"
+          [(ngModel)]="user"
+          required
+          maxlength="100"
+          class="form-control"
+          placeholder="Add meg a neved..."
+        />
+      </mat-form-field>
+    </div>
+
+    <div class="input-group">
+      <mat-form-field>
+        <input
+          matInput
+          type="text"
+          id="content"
+          name="content"
+          [(ngModel)]="content"
+          required
+          maxlength="100"
+          placeholder="Aa"
+        />
+      </mat-form-field>
+      <button
+        class="send-button"
+        mat-stroked-button
+        type="submit"
+        [disabled]="isLoading || messageForm.invalid"
+      >
+        {{ isLoading ? "Küldés..." : "Üzenet Küldése" }}
+      </button>
+    </div>
+  </form>
 </div>
