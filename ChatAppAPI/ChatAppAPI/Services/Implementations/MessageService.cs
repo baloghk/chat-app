@@ -1,18 +1,22 @@
 ﻿using ChatAppAPI.DTOs.Request;
 using ChatAppAPI.DTOs.Response;
+using ChatAppAPI.Hubs;
 using ChatAppAPI.Models;
 using ChatAppAPI.Repositories.Interfaces;
 using ChatAppAPI.Services.Interfaces;
+using Microsoft.AspNetCore.SignalR;
 
 namespace ChatAppAPI.Services.Implementations
 {
     public class MessageService : IMessageService
     {
         private readonly IMessageRepository _messageRepository;
+        private readonly IHubContext<ChatHub> _hubContext;
 
-        public MessageService(IMessageRepository messageRepository)
+        public MessageService(IMessageRepository messageRepository, IHubContext<ChatHub> hubContext)
         {
             _messageRepository = messageRepository;
+            _hubContext = hubContext;
         }
 
         public async Task<MessageResponseDto> CreateMessageAsync(MessageCreateDto messageDto)
@@ -24,7 +28,12 @@ namespace ChatAppAPI.Services.Implementations
             };
 
             var createdMessage = await _messageRepository.CreateAsync(message);
-            return MessageResponseDto.FromEntity(createdMessage);
+            var responseDto = MessageResponseDto.FromEntity(createdMessage);
+
+            await _hubContext.Clients.Group("ChatRoom")
+                .SendAsync("ReceiveMessage", responseDto);
+
+            return responseDto;
         }
 
         public async Task<bool> DeleteMessageAsync(Guid publicId)

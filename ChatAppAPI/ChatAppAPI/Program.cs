@@ -4,6 +4,7 @@ using ChatAppAPI.Repositories.Interfaces;
 using ChatAppAPI.Repositories.Implementations;
 using ChatAppAPI.Services.Interfaces;
 using ChatAppAPI.Services.Implementations;
+using ChatAppAPI.Hubs;
 
 
 namespace ChatAppAPI
@@ -16,6 +17,7 @@ namespace ChatAppAPI
 
       // Add services to the container.
       builder.Services.AddControllers();
+      builder.Services.AddSignalR();
 
       // PostgreSQL configuration
       builder.Services.AddDbContext<AppDbContext>(options =>
@@ -54,6 +56,7 @@ namespace ChatAppAPI
 
       app.UseAuthorization();
 
+      app.MapHub<ChatHub>("/chathub");
 
       app.MapControllers();
 
