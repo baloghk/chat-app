@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using ChatAppAPI.Data;
+using ChatAppAPI.Repositories.Interfaces;
+using ChatAppAPI.Repositories.Implementations;
+using ChatAppAPI.Services.Interfaces;
+using ChatAppAPI.Services.Implementations;
 
 
 namespace ChatAppAPI
@@ -12,12 +16,18 @@ namespace ChatAppAPI
 
       // Add services to the container.
       builder.Services.AddControllers();
-      builder.Services.AddEndpointsApiExplorer();
-      builder.Services.AddSwaggerGen();
 
       // PostgreSQL configuration
       builder.Services.AddDbContext<AppDbContext>(options =>
           options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+      // Repository and Service registrations
+      builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+      builder.Services.AddScoped<IMessageService, MessageService>();
+
+      // Swagger configuration
+      builder.Services.AddEndpointsApiExplorer();
+      builder.Services.AddSwaggerGen();
 
       var allowedOrigins = builder.Configuration.GetValue<string>("AllowedOrigins")!.Split(",");
 

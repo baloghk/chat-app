@@ -2,6 +2,7 @@
 
 @for (message of messages; track $index) {
 <div>
+  <div>User: {{ message.id }}</div>
   <div>User: {{ message.user }}</div>
   <div>Text: {{ message.content }}</div>
   <div>Date: {{ message.timestamp }}</div>
