@@ -1,0 +1,29 @@
+<div class="welcome-dialog">
+  <h2 mat-dialog-title>Üdvözöllek!</h2>
+  <mat-dialog-content>
+    <p>Add meg a neved, hogy csatlakozhass a beszélgetéshez:</p>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Név</mat-label>
+      <input
+        matInput
+        [(ngModel)]="userName"
+        placeholder="Add meg a neved..."
+        maxlength="50"
+        (keyup.enter)="onSubmit()"
+        #nameInput
+        required
+      />
+      <mat-error *ngIf="!userName">A név megadása kötelező</mat-error>
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onSubmit()"
+      [disabled]="!userName || userName.trim().length === 0"
+    >
+      Csatlakozás
+    </button>
+  </mat-dialog-actions>
+</div>

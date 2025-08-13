@@ -1,54 +1,87 @@
 <div class="chat-page">
-  <h3 style="margin-top: 50px">Global chat:</h3>
-  <div class="chat-messages">
-    <div *ngIf="messages.length === 0">Még nincsenek üzenetek...</div>
-
-    <div *ngFor="let message of messages">
-      <div class="message-card">
-        <small>{{ message.user }} - </small>
-        <small>{{ message.timestamp | date : "shortTime" }}</small>
-        <br />
-        <strong>{{ message.content }}</strong>
+  <div class="chat-header">
+    <h2>Talksy</h2>
+    <div class="header-actions">
+      <div class="theme-toggle">
+        <button mat-icon-button (click)="toggleTheme()">
+          <mat-icon>{{ isDarkMode ? "dark_mode" : "light_mode" }}</mat-icon>
+        </button>
+      </div>
+      <div class="user-info" *ngIf="currentUserName">
+        <button
+          mat-icon-button
+          (click)="changeUserName()"
+          class="change-name-btn"
+        >
+          <mat-icon>face</mat-icon>
+        </button>
       </div>
     </div>
   </div>
-  <form (ngSubmit)="onSubmit()" #messageForm="ngForm" class="message-form">
-    <div>
-      <mat-form-field>
-        <input
-          matInput
-          type="text"
-          id="user"
-          name="user"
-          [(ngModel)]="user"
-          required
-          maxlength="100"
-          class="form-control"
-          placeholder="Add meg a neved..."
-        />
-      </mat-form-field>
+
+  <div class="chat-messages" #chatMessages>
+    <div *ngIf="messages.length === 0" class="no-messages">
+      <mat-icon>chat_bubble_outline</mat-icon>
+      <p>Még nincsenek üzenetek...</p>
+      <small>Írj egy üzenetet a beszélgetés elkezdéséhez!</small>
     </div>
 
+    <div
+      *ngFor="let message of messages"
+      class="message-container"
+      [ngClass]="{
+        'own-message': isOwnMessage(message.user),
+        'other-message': !isOwnMessage(message.user)
+      }"
+    >
+      <div *ngIf="isOwnMessage(message.user)" class="message-card own">
+        <div class="message-content">{{ message.content }}</div>
+        <div class="message-meta">
+          <small class="timestamp">{{
+            message.timestamp | date : "shortTime"
+          }}</small>
+        </div>
+      </div>
+
+      <div *ngIf="!isOwnMessage(message.user)" class="message-card other">
+        <div class="message-header">
+          <span class="sender-name">{{ message.user }}</span>
+          <small class="timestamp">{{
+            message.timestamp | date : "shortTime"
+          }}</small>
+        </div>
+        <div class="message-content">{{ message.content }}</div>
+      </div>
+    </div>
+  </div>
+
+  <form (ngSubmit)="onSubmit()" #messageForm="ngForm" class="message-form">
     <div class="input-group">
-      <mat-form-field>
+      <div class="message-input">
         <input
-          matInput
           type="text"
           id="content"
           name="content"
           [(ngModel)]="content"
-          required
-          maxlength="100"
+          maxlength="500"
+          (keyup.enter)="onSubmit()"
           placeholder="Aa"
+          autocomplete="off"
         />
-      </mat-form-field>
+      </div>
+
       <button
-        class="send-button"
-        mat-stroked-button
+        color="primary"
         type="submit"
-        [disabled]="isLoading || messageForm.invalid"
+        [disabled]="isLoading || messageForm.invalid || !content.trim()"
+        class="send-button"
       >
-        {{ isLoading ? "Küldés..." : "Üzenet Küldése" }}
+        <mat-icon *ngIf="!isLoading">send</mat-icon>
+        <mat-progress-spinner
+          *ngIf="isLoading"
+          diameter="24"
+          mode="indeterminate"
+        ></mat-progress-spinner>
       </button>
     </div>
   </form>
